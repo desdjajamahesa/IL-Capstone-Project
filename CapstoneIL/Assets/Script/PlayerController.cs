@@ -55,16 +55,26 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"Facing direction: {facingDir}");
         Debug.Log($"Interaction position: {interactPos}");
 
-        var collider = Physics2D.OverlapCircle(interactPos, 0.2f, interactableLayer);
+        // Gunakan layerMask untuk hanya mendeteksi collider dari layer yang sesuai
+        int layerMask = 1 << LayerMask.NameToLayer("Interactable");
+
+        var collider = Physics2D.OverlapCircle(interactPos, 0.2f, layerMask);
         if (collider != null)
         {
             Debug.Log("There's an NPC here!!");
+            var npc = collider.GetComponent<NPC>();
+            if (npc != null)
+            {
+                Debug.Log("Calling StartDialogue on NPC.");
+                npc.StartDialogue();
+            }
         }
         else
         {
             Debug.Log("No NPC found.");
         }
     }
+
 
     IEnumerator Move(Vector3 targetPos)
     {
