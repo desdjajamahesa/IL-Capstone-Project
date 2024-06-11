@@ -5,6 +5,7 @@ using UnityEngine;
 public class EnemyHealth : MonoBehaviour
 {
     [SerializeField] private int startingHealth = 3;
+    [SerializeField] private GameObject deathVFXPrefab;
 
     private int currentHealth;
     private Knockback knockback;
@@ -19,6 +20,7 @@ public class EnemyHealth : MonoBehaviour
     private void Start()
     {
         currentHealth = startingHealth;
+        GameManager.Instance.RegisterEnemy();
     }
 
     public void TakeDamage(int damage)
@@ -26,12 +28,26 @@ public class EnemyHealth : MonoBehaviour
         currentHealth -= damage;
         knockback.GetKnockedBack(PlayerControllerr.Instance.transform, 15f);
         StartCoroutine(flash.FlashRoutine());
+
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            Die();
+        }
     }
 
+    private void Die()
+    {
+        // Logika kematian musuh
+        Destroy(gameObject);
+        GameManager.Instance.UnregisterEnemy();
+    }
     public void DetectDeath()
     {
         if (currentHealth <= 0)
         {
+            Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
+            GameManager.Instance.UnregisterEnemy();
             Destroy(gameObject);
         }
     }

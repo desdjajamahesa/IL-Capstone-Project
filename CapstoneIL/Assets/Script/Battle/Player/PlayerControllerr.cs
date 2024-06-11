@@ -13,6 +13,7 @@ public class PlayerControllerr : MonoBehaviour
     private Vector2 movement;
     private Rigidbody2D rb;
     private Animator myAnimator;
+    private Knockback knockback;
     private SpriteRenderer mySpriteRender;
 
     private bool facingLeft = false;
@@ -24,6 +25,7 @@ public class PlayerControllerr : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         myAnimator = GetComponent<Animator>();
         mySpriteRender = GetComponent<SpriteRenderer>();
+        knockback = GetComponent<Knockback>();
     }
 
     private void OnEnable()
@@ -52,6 +54,8 @@ public class PlayerControllerr : MonoBehaviour
 
     private void Move()
     {
+        if (knockback.gettingKnockedBack) { return; }
+
         rb.MovePosition(rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
     }
 
