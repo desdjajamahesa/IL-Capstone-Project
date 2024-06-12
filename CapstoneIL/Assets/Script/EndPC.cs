@@ -80,7 +80,7 @@ public class EndPC : MonoBehaviour
         else
         {
             // Load the next scene here
-            SceneManager.LoadScene("Chapter");
+            SceneManager.LoadScene("Combat");
         }
     }
 
