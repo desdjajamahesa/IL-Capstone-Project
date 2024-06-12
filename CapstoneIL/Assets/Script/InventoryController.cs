@@ -11,6 +11,8 @@ namespace Inventory
 {
     public class InventoryController : MonoBehaviour
 {
+
+    
     [SerializeField]
     private InventoryPage inventoryUI;
     [SerializeField]
@@ -25,7 +27,7 @@ namespace Inventory
 
     public void Start()
         {
-            
+          
             PrepareUI();
             PrepareInventoryData();
         }
