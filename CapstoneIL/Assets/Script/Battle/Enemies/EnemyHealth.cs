@@ -20,7 +20,7 @@ public class EnemyHealth : MonoBehaviour
     private void Start()
     {
         currentHealth = startingHealth;
-        GameManager.Instance.RegisterEnemy();
+        BattleManager.Instance.RegisterEnemy();
     }
 
     public void TakeDamage(int damage)
@@ -40,14 +40,14 @@ public class EnemyHealth : MonoBehaviour
     {
         // Logika kematian musuh
         Destroy(gameObject);
-        GameManager.Instance.UnregisterEnemy();
+        BattleManager.Instance.UnregisterEnemy();
     }
     public void DetectDeath()
     {
         if (currentHealth <= 0)
         {
             Instantiate(deathVFXPrefab, transform.position, Quaternion.identity);
-            GameManager.Instance.UnregisterEnemy();
+            BattleManager.Instance.UnregisterEnemy();
             Destroy(gameObject);
         }
     }

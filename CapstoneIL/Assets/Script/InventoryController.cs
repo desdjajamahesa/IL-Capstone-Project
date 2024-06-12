@@ -25,6 +25,7 @@ namespace Inventory
 
     public void Start()
         {
+            
             PrepareUI();
             PrepareInventoryData();
         }
