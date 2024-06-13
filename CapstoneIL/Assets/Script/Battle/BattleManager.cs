@@ -1,11 +1,10 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class BattleManager : MonoBehaviour
 {
     public static BattleManager Instance;
 
-    [SerializeField] private string nextSceneName; // Nama scene berikutnya
+    [SerializeField] private GameObject endBattleCanvas; // Canvas untuk menampilkan setelah pertempuran selesai
 
     private int enemiesAlive = 0;
 
@@ -35,8 +34,8 @@ public class BattleManager : MonoBehaviour
 
         if (enemiesAlive <= 0)
         {
-            // Semua musuh telah terbunuh, pindah ke scene berikutnya
-            SceneManager.LoadScene(nextSceneName);
+            // Semua musuh telah terbunuh, tampilkan canvas endBattleCanvas
+            endBattleCanvas.GetComponent<EndBattleCanvas>().ShowEndBattleCanvas();
         }
     }
 }
