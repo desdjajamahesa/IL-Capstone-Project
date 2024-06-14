@@ -40,12 +40,16 @@ public class PlayerHealth : MonoBehaviour
         {
             TakeDamage(1);
             knockback.GetKnockedBack(other.gameObject.transform, knockBackThrustAmount);
+            knockback.GetKnockedBack(PlayerControllerr.Instance.transform, 15f);
             StartCoroutine(flash.FlashRoutine());
         }
     }
 
     private void TakeDamage(int damageAmount)
     {
+        
+        
+
         canTakeDamage = false;
         currentHealth -= damageAmount;
         UpdateHealthBar(); // Perbarui health bar setelah menerima kerusakan
