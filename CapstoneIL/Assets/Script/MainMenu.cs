@@ -5,16 +5,27 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-    public AudioSource music;
+    AudioManagerSM audioManager;
 
-    void Start()
+    private void Awake()
     {
-        music.Play();
+        audioManager = GameObject.FindGameObjectWithTag("Audio").GetComponent<AudioManagerSM>();
     }
 
     public void PlayGame()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        audioManager.PlaySFX(audioManager.startGameBtn);
+    }
+
+    public void Select()
+    {
+        audioManager.PlaySFX(audioManager.selectBtn);
+    }
+
+    public void Back()
+    {
+        audioManager.PlaySFX(audioManager.backBtn);
     }
 
     public void ExitGame()
