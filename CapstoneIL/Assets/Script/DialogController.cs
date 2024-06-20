@@ -16,7 +16,7 @@ public class DialogController : MonoBehaviour
     void Start()
     {
         // Set the initial dialog text and make sure the panel is visible
-        ShowDialog("Selamat datang di petualangan baru!", displayDuration);
+        ShowDialog("Tutorial", displayDuration);
     }
 
     void Update()

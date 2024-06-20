@@ -1,16 +1,21 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
     private enum State
     {
-        Roaming
+        Roaming,
+        Chasing
     }
+
+    [SerializeField] private float detectionRange = 5f; // Jarak deteksi musuh ke pemain
+    [SerializeField] private float roamInterval = 2f; // Interval waktu untuk perubahan arah acak
 
     private State state;
     private EnemyPathfinding enemyPathfinding;
+    private Transform playerTransform;
+    private Vector2 roamPosition;
 
     private void Awake()
     {
@@ -20,21 +25,45 @@ public class EnemyAI : MonoBehaviour
 
     private void Start()
     {
+        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         StartCoroutine(RoamingRoutine());
+    }
+
+    private void Update()
+    {
+        float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
+
+        if (distanceToPlayer <= detectionRange)
+        {
+            state = State.Chasing;
+        }
+        else
+        {
+            state = State.Roaming;
+        }
+
+        if (state == State.Chasing)
+        {
+            enemyPathfinding.MoveTo(playerTransform.position - (Vector3)transform.position);
+        }
     }
 
     private IEnumerator RoamingRoutine()
     {
-        while (state == State.Roaming)
+        while (true)
         {
-            Vector2 roamPosition = GetRoamingPosition();
-            enemyPathfinding.MoveTo(roamPosition);
-            yield return new WaitForSeconds(2f);
+            if (state == State.Roaming)
+            {
+                roamPosition = GetRoamingPosition();
+                enemyPathfinding.MoveTo(roamPosition);
+            }
+
+            yield return new WaitForSeconds(roamInterval);
         }
     }
 
     private Vector2 GetRoamingPosition()
     {
-        return new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+        return (Vector2)transform.position + new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
     }
 }
