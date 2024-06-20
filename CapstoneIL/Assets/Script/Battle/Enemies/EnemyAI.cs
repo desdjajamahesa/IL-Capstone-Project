@@ -4,62 +4,37 @@ using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
-    [SerializeField] private float detectionRange = 5f; // Jarak deteksi musuh ke pemain
-    [SerializeField] private float wanderRadius = 3f; // Radius untuk gerakan acak
-    [SerializeField] private float wanderInterval = 2f; // Interval waktu untuk perubahan arah acak
+    private enum State
+    {
+        Roaming
+    }
 
-    private Transform playerTransform;
-    private Rigidbody2D rb;
-    private Vector2 wanderDirection;
-    private float wanderTimer;
+    private State state;
     private EnemyPathfinding enemyPathfinding;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
         enemyPathfinding = GetComponent<EnemyPathfinding>();
+        state = State.Roaming;
     }
 
     private void Start()
     {
-        // Temukan objek dengan tag "Player" untuk mendapatkan transform pemain
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        wanderTimer = wanderInterval;
+        StartCoroutine(RoamingRoutine());
     }
 
-    private void FixedUpdate()
+    private IEnumerator RoamingRoutine()
     {
-        float distanceToPlayer = Vector2.Distance(rb.position, playerTransform.position);
-
-        if (distanceToPlayer <= detectionRange)
+        while (state == State.Roaming)
         {
-            MoveTowardsPlayer();
-        }
-        else
-        {
-            Wander();
+            Vector2 roamPosition = GetRoamingPosition();
+            enemyPathfinding.MoveTo(roamPosition);
+            yield return new WaitForSeconds(2f);
         }
     }
 
-    private void MoveTowardsPlayer()
+    private Vector2 GetRoamingPosition()
     {
-        if (playerTransform != null)
-        {
-            enemyPathfinding.MoveTo(playerTransform.position);
-        }
-    }
-
-    private void Wander()
-    {
-        wanderTimer += Time.fixedDeltaTime;
-
-        if (wanderTimer >= wanderInterval)
-        {
-            wanderDirection = (Random.insideUnitCircle * wanderRadius).normalized;
-            wanderTimer = 0;
-        }
-
-        Vector2 newPosition = rb.position + wanderDirection * enemyPathfinding.MoveSpeed * Time.fixedDeltaTime;
-        enemyPathfinding.MoveTo(newPosition);
+        return new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
     }
 }

@@ -8,6 +8,8 @@ public class PlayerControllerr : MonoBehaviour
     public static PlayerControllerr Instance;
 
     [SerializeField] private float moveSpeed = 1f;
+    [SerializeField] private LayerMask solidObjectsLayer; // Tambahkan LayerMask untuk solid objects
+    [SerializeField] private LayerMask interactableLayer; // Tambahkan LayerMask untuk interactable objects
 
     private PlayerControls playerControls;
     private Vector2 movement;
@@ -56,7 +58,12 @@ public class PlayerControllerr : MonoBehaviour
     {
         if (knockback.gettingKnockedBack) { return; }
 
-        rb.MovePosition(rb.position + movement * (moveSpeed * Time.fixedDeltaTime));
+        Vector2 targetPos = rb.position + movement * (moveSpeed * Time.fixedDeltaTime);
+
+        if (IsWalkable(targetPos))
+        {
+            rb.MovePosition(targetPos);
+        }
     }
 
     private void AdjustPlayerFacingDirection()
@@ -74,5 +81,16 @@ public class PlayerControllerr : MonoBehaviour
             mySpriteRender.flipX = false;
             FacingLeft = false;
         }
+    }
+
+    private bool IsWalkable(Vector2 targetPos)
+    {
+        // Memeriksa tabrakan dengan solidObjectsLayer atau interactableLayer
+        if (Physics2D.OverlapCircle(targetPos, 0.2f, solidObjectsLayer | interactableLayer) != null)
+        {
+            return false;
+        }
+
+        return true;
     }
 }

@@ -25,14 +25,6 @@ public class EnemyPathfinding : MonoBehaviour
 
     public void MoveTo(Vector2 targetPosition)
     {
-        Vector2 newPosition = Vector2.MoveTowards(rb.position, targetPosition, moveSpeed * Time.fixedDeltaTime);
-        rb.MovePosition(newPosition);
+        moveDir = targetPosition;
     }
-
-    public float MoveSpeed
-    {
-        get { return moveSpeed; }
-        set { moveSpeed = value; }
-    }
-
 }
