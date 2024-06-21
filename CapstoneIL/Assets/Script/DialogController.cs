@@ -16,7 +16,7 @@ public class DialogController : MonoBehaviour
     void Start()
     {
         // Set the initial dialog text and make sure the panel is visible
-        ShowDialog("Tutorial", displayDuration);
+        ShowDialog("kill 4 enemies (wayungyang) to achieve victory", displayDuration);
     }
 
     void Update()
