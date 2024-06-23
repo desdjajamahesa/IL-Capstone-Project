@@ -23,7 +23,7 @@ public class EndBattleCanvas : MonoBehaviour
     public void GoToNextScene()
     {
         // Pindah ke scene berikutnya
-        SceneManager.LoadScene("Intro");
+        SceneManager.LoadScene("Chapter 3");
     }
 
     public void GoToMainMenu()

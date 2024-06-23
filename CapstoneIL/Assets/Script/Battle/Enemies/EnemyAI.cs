@@ -1,65 +1,69 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyAI : MonoBehaviour
 {
-    [SerializeField] private float detectionRange = 5f; // Jarak deteksi musuh ke pemain
-    [SerializeField] private float wanderRadius = 3f; // Radius untuk gerakan acak
-    [SerializeField] private float wanderInterval = 2f; // Interval waktu untuk perubahan arah acak
+    private enum State
+    {
+        Roaming,
+        Chasing
+    }
 
-    private Transform playerTransform;
-    private Rigidbody2D rb;
-    private Vector2 wanderDirection;
-    private float wanderTimer;
+    [SerializeField] private float detectionRange = 5f; // Jarak deteksi musuh ke pemain
+    [SerializeField] private float roamInterval = 2f; // Interval waktu untuk perubahan arah acak
+
+    private State state;
     private EnemyPathfinding enemyPathfinding;
+    private Transform playerTransform;
+    private Vector2 roamPosition;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
         enemyPathfinding = GetComponent<EnemyPathfinding>();
+        state = State.Roaming;
     }
 
     private void Start()
     {
-        // Temukan objek dengan tag "Player" untuk mendapatkan transform pemain
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
-        wanderTimer = wanderInterval;
+        StartCoroutine(RoamingRoutine());
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        float distanceToPlayer = Vector2.Distance(rb.position, playerTransform.position);
+        float distanceToPlayer = Vector2.Distance(transform.position, playerTransform.position);
 
         if (distanceToPlayer <= detectionRange)
         {
-            MoveTowardsPlayer();
+            state = State.Chasing;
         }
         else
         {
-            Wander();
+            state = State.Roaming;
+        }
+
+        if (state == State.Chasing)
+        {
+            enemyPathfinding.MoveTo(playerTransform.position - (Vector3)transform.position);
         }
     }
 
-    private void MoveTowardsPlayer()
+    private IEnumerator RoamingRoutine()
     {
-        if (playerTransform != null)
+        while (true)
         {
-            enemyPathfinding.MoveTo(playerTransform.position);
+            if (state == State.Roaming)
+            {
+                roamPosition = GetRoamingPosition();
+                enemyPathfinding.MoveTo(roamPosition);
+            }
+
+            yield return new WaitForSeconds(roamInterval);
         }
     }
 
-    private void Wander()
+    private Vector2 GetRoamingPosition()
     {
-        wanderTimer += Time.fixedDeltaTime;
-
-        if (wanderTimer >= wanderInterval)
-        {
-            wanderDirection = (Random.insideUnitCircle * wanderRadius).normalized;
-            wanderTimer = 0;
-        }
-
-        Vector2 newPosition = rb.position + wanderDirection * enemyPathfinding.MoveSpeed * Time.fixedDeltaTime;
-        enemyPathfinding.MoveTo(newPosition);
+        return (Vector2)transform.position + new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
     }
 }
